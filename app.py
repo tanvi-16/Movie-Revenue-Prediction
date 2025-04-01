@@ -4,15 +4,12 @@ import numpy as np
 import joblib
 import os
 
-# Load trained model and preprocessor
 model = joblib.load("model.pkl")  
 preprocessor = joblib.load("preprocessor.pkl")  
 
-# Streamlit App UI
 st.title("🎬 Movie Revenue Prediction App")
 st.write("Enter movie details below to predict the box office revenue.")
 
-# User Input Fields
 budget = st.number_input("Budget ($)", min_value=1000000, step=1000000, value=50000000, max_value=1000000000)
 running_time = st.number_input("Running Time (minutes)", min_value=60, max_value=400, step=5, value=150)
 release_month = st.slider("Release Month", 1, 12, 6)
@@ -27,12 +24,10 @@ genres = st.multiselect("Genres",
                         ['Drama', 'Sport', 'Thriller', 'Fantasy', 'Animation', 'Crime', 'Sci-Fi', 'Action', 'Adventure', 'Romance', 'Documentary', 'Horror', 'Mystery', 'War', 'Family', 'Biography', 'Musical', 'Western', 'History', 'Comedy', 'Music']
                         )
 
-# Convert categorical inputs to numerical values
 holiday_season = 1 if holiday_season == "Yes" else 0
 has_sequel = 1 if has_sequel == "Yes" else 0
 franchise = 1 if franchise in ["Avengers", "Harry Potter", "Star Wars", "Batman", "Spider-Man"] else 0
 
-# Prepare user input as a DataFrame
 user_input = pd.DataFrame([{ 
     "Budget": budget,
     "Running Time": running_time,
@@ -45,12 +40,10 @@ user_input = pd.DataFrame([{
     "Franchise": franchise
 }])
 
-# Add genre one-hot encoding
 all_genres = ['Drama', 'Sport', 'Thriller', 'Fantasy', 'Animation', 'Crime', 'Sci-Fi', 'Action', 'Adventure', 'Romance', 'Documentary', 'Horror', 'Mystery', 'War', 'Family', 'Biography', 'Musical', 'Western', 'History', 'Comedy', 'Music']
 for genre in all_genres:
     user_input[genre] = 1 if genre in genres else 0
 
-# Prediction button
 if st.button("Predict Revenue"):
     try:
         transformed_input = preprocessor.transform(user_input)
